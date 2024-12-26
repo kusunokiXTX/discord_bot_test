@@ -31,7 +31,7 @@ class ReadyLoad(commands.Cog):
 
         await self.bot.change_presence(
             status=discord.Status.do_not_disturb,
-            activity=discord.Activity(name='起動中...................',type=discord.ActivityType.watching)
+            activity=discord.Activity(name='起動中...................', type=discord.ActivityType.watching)
         )
 
         self.app = FastAPI(
@@ -40,9 +40,9 @@ class ReadyLoad(commands.Cog):
             openapi_url=None
         )
         
-	self.app.include_router(router=Index(bot=self.bot).router)
+        self.app.include_router(router=Index(bot=self.bot).router)  # インデントを修正
 
-        if os.environ.get("PORTS") != None:
+        if os.environ.get("PORTS") is not None:  # 比較演算子を修正
             hostname = "localhost"
             portnumber = int(os.getenv("PORTS", default=5000))
         else:
@@ -60,16 +60,10 @@ class ReadyLoad(commands.Cog):
         print('起動しました')
 
         # 終了時
-        if os.environ.get("PORTS") != None:
-            await server.serve()
-            print("exit")
-            await server.shutdown()
-            await self.bot.close()
-        else:
-            await server.serve()
-            print("exit")
-            await server.shutdown()
-            await self.bot.close()
+        await server.serve()  # 重複した条件を削除
+        print("exit")
+        await server.shutdown()
+        await self.bot.close()
 	    
 def setup(bot:DBot):
     return bot.add_cog(ReadyLoad(bot))
